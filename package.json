@@ -7,9 +7,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve --mode production",
     "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
-    "start": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve"
+    "start": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@mdi/js": "^5.2.45",
@@ -27,7 +28,7 @@
     "@vue/cli-plugin-babel": "^4.3.1",
     "@vue/cli-plugin-eslint": "^4.3.1",
     "@vue/cli-plugin-pwa": "^4.3.1",
-    "@vue/cli-service": "^4.3.1",
+    "@vue/cli-service": "^4.5.19",
     "@vue/eslint-config-prettier": "^5.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
