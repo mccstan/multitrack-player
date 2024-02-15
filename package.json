@@ -8,8 +8,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "start": "vue-cli-service serve"
+    "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service serve"
   },
   "dependencies": {
     "@mdi/js": "^5.2.45",
