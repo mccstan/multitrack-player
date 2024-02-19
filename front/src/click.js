@@ -66,8 +66,10 @@ export function setClickEventLoopCount(count) {
 }
 
 export function setClickGain(value) {
+  console.log(`Setting click gain to: ${value}`);
   gainNode.gain.value = value;
 }
+
 
 export function getClickInterval(state) {
   return 60 / (state.clickBpm * (state.clickTimeSignature.unit / 4));

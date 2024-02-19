@@ -135,11 +135,12 @@ export default {
   },
   methods: {
     mapControlOrDispatchAction(controlName, actionName) {
+      console.log(`Dispatching action: ${actionName || controlName}`);
       if (!this.controlEditMode) {
         return this.$store.dispatch(actionName || controlName);
+      } else {
+        return this.$store.dispatch('setControlEditSelected', controlName);
       }
-
-      this.$store.dispatch('setControlEditSelected', controlName);
     },
     getControlMappingName(controlName) {
       if (!this.controlEditMode) {
