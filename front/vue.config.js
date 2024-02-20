@@ -2,6 +2,7 @@ const fs = require('fs');
 const packageJson = fs.readFileSync('./package.json');
 const version = JSON.parse(packageJson).version || 0;
 const webpack = require('webpack');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   configureWebpack: {
@@ -10,7 +11,8 @@ module.exports = {
         'process.env': {
           PACKAGE_VERSION: '"' + version + '"'
         }
-      })
+      }),
+      new Dotenv()
     ]
   },
   lintOnSave: false,

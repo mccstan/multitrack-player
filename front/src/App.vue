@@ -9,6 +9,7 @@
         <Controls />
       </VAppBar>
 
+      <ProjectManager />
       <v-content>
         <router-view />
       </v-content>
@@ -18,6 +19,7 @@
 
 <script>
 import Controls from '@/components/Controls';
+import ProjectManager from '@/components/ProjectManager.vue';
 
 import { initClick } from './click';
 import { initMidi } from './midi';
@@ -26,7 +28,8 @@ import store from '@/store';
 
 export default {
   components: {
-    Controls
+    Controls,
+    ProjectManager
   },
   async mounted() {
     try {
