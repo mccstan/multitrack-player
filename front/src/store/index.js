@@ -133,8 +133,22 @@ const store = new Vuex.Store({
       setClickEventLoopCount(0);
       state.tracks.forEach(track => track.eventLoop(store.state.playPosition));
     },
-    addTrack({ commit }, { name, arrayBuffer }) {
-      commit('addTrack', newTrack({ name, arrayBuffer }));
+    async addTrack({ commit }, { name, arrayBuffer, url }) {
+      // If the payload includes a URL, fetch the audio data as ArrayBuffer
+      if (url) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+          arrayBuffer = await response.arrayBuffer();
+        } catch (error) {
+          console.error('Error fetching remote audio file:', error);
+          return; // Stop processing if there's an error
+        }
+      }
+      // Proceed to add the track with the ArrayBuffer
+      if (arrayBuffer) {
+        commit('addTrack', newTrack({ name, arrayBuffer }));
+      }
     },
     removeTrack({ commit }, track) {
       commit('removeTrack', track);

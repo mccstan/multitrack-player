@@ -62,13 +62,15 @@ export default {
       if (!this.selectedProject) return;
       try {
         const response = await this.$axios.get(
-          `/api/list-project-files/${encodeURIComponent(this.selectedProject.name)}`
+          `/api/list-project-files/${encodeURIComponent(
+            this.selectedProject.name
+          )}`
         );
         response.data.forEach((file) => {
           // Assuming file.url is directly usable or you convert it to ArrayBuffer if necessary
           this.$store.dispatch('addTrack', {
             name: file.name,
-            url: file.url, // Adjust based on how your store expects to receive the track data
+            url: file.url // Adjust based on how your store expects to receive the track data
           });
         });
       } catch (error) {
@@ -84,7 +86,7 @@ export default {
         fileReader.addEventListener('load', () => {
           this.$store.dispatch('addTrack', {
             name,
-            arrayBuffer: fileReader.result,
+            arrayBuffer: fileReader.result
           });
         });
       });

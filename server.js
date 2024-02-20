@@ -42,6 +42,30 @@ app.get('/api/list-project-files/:projectName', async (req, res) => {
 });
 
 
+// Proxy endpoint for streaming GCS files
+app.get('/api/proxy-gcs/:filePath', async (req, res) => {
+  // Construct the direct GCS file URL
+  const filePath = req.params.filePath;
+  const fileUrl = `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${filePath}`;
+
+  try {
+    const gcsRes = await fetch(fileUrl);
+
+    if (!gcsRes.ok) {
+      // Forward the HTTP status code from GCS to the client
+      return res.status(gcsRes.status).send('Error retrieving file from GCS');
+    }
+
+    // Forward the Content-Type
+    res.setHeader('Content-Type', gcsRes.headers.get('Content-Type'));
+
+    // Stream the file content from GCS to the client
+    gcsRes.body.pipe(res);
+  } catch (error) {
+    console.error('Failed to stream file from GCS:', error);
+    res.status(500).send('Internal server error');
+  }
+});
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
