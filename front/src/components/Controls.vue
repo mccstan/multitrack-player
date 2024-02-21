@@ -1,5 +1,8 @@
 <template>
   <VRow justify="end" align="center">
+    <VAlert v-if="!isMidiSupported" type="error" dense text>
+      MIDI is not supported by your browser.
+    </VAlert>
     <VBtn
       v-if="controlEditMode"
       small
@@ -125,15 +128,19 @@ export default {
     },
     controlEditMode() {
       return this.$store.state.controlEditMode;
+    },
+    isMidiSupported() {
+      return this.$store.state.isMidiSupported;
     }
   },
   methods: {
     mapControlOrDispatchAction(controlName, actionName) {
+      console.log(`Dispatching action: ${actionName || controlName}`);
       if (!this.controlEditMode) {
         return this.$store.dispatch(actionName || controlName);
+      } else {
+        return this.$store.dispatch('setControlEditSelected', controlName);
       }
-
-      this.$store.dispatch('setControlEditSelected', controlName);
     },
     getControlMappingName(controlName) {
       if (!this.controlEditMode) {

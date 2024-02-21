@@ -4,7 +4,7 @@ import {
   clickEventLoop,
   setClickEventLoopCount,
   getClickBeats,
-  getClickInterval
+  getClickInterval, setClickGain
 } from '../click';
 import settings from './settings';
 
@@ -62,12 +62,16 @@ const store = new Vuex.Store({
       state.tracks.splice(state.tracks.indexOf(track), 1);
     },
     setClickActive(state, value) {
+      console.log(`Setting clickActive to ${value}`);
       state.clickActive = value;
+    },
+    setClickVolume(state, volume) {
+      // Assuming you have a way to adjust the actual metronome volume in your click.js or similar
+      setClickGain(volume); // Adjust this to actually change the volume in your audio context
     },
     setPlayPosition(state, value) {
       state.playPosition = value;
     },
-
     setTrackActive(state, { track, value }) {
       track.active = value;
     },
@@ -129,14 +133,30 @@ const store = new Vuex.Store({
       setClickEventLoopCount(0);
       state.tracks.forEach(track => track.eventLoop(store.state.playPosition));
     },
-    addTrack({ commit }, { name, arrayBuffer }) {
-      commit('addTrack', newTrack({ name, arrayBuffer }));
+    async addTrack({ commit }, { name, arrayBuffer, url }) {
+      // If the payload includes a URL, fetch the audio data as ArrayBuffer
+      if (url) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+          arrayBuffer = await response.arrayBuffer();
+        } catch (error) {
+          console.error('Error fetching remote audio file:', error);
+          return; // Stop processing if there's an error
+        }
+      }
+      // Proceed to add the track with the ArrayBuffer
+      if (arrayBuffer) {
+        commit('addTrack', newTrack({ name, arrayBuffer }));
+      }
     },
     removeTrack({ commit }, track) {
       commit('removeTrack', track);
     },
     toggleClickActive({ commit, state }) {
       commit('setClickActive', !state.clickActive);
+      // Assuming setClickGain adjusts the gain in your audio context
+      setClickGain(state.clickActive ? 1 : 0);
     },
     setTrackGainValue({ state }, { track, value }) {
       track.gainValue = value;

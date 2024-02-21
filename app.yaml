@@ -1,0 +1,49 @@
+runtime: nodejs20
+
+service: tracks
+
+instance_class: F2
+
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_instances: 1
+
+
+handlers:
+
+  # Serve specific static files with the /multitrack-player prefix
+  - url: /multitrack-player/click-accent.wav
+    static_files: front/dist/click-accent.wav
+    upload: front/dist/click-accent.wav
+
+  - url: /multitrack-player/click.wav
+    static_files: front/dist/click.wav
+    upload: front/dist/click.wav
+
+  # Serve directories of static files
+  - url: /multitrack-player/img
+    static_dir: front/dist/img
+
+  - url: /multitrack-player/js
+    static_dir: front/dist/js
+
+  - url: /multitrack-player/css
+    static_dir: front/dist/css
+
+  # Serve the favicon and manifest, adjusting the path as needed
+  - url: /multitrack-player/favicon.ico
+    static_files: front/dist/favicon.ico
+    upload: front/dist/favicon.ico
+
+  - url: /multitrack-player/(.*\.(json|ico|html))$
+    static_files: front/dist/\1
+    upload: front/dist/.*\.(json|ico|html)$
+
+  # Fallback handler for SPA routing: serve index.html for any non-static request
+  - url: /multitrack-player/.*
+    static_files: front/dist/index.html
+    upload: front/dist/index.html
+
+
+
+  #--promote --stop-previous-version
