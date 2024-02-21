@@ -1,5 +1,10 @@
 <template>
   <v-container>
+
+    <v-overlay :value="isLoading">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+
     <!-- Project Selection Dropdown -->
     <v-select
       v-model="selectedProject"
@@ -44,6 +49,7 @@ export default {
       files: [],
       projectNames: [],
       selectedProject: null,
+      isLoading: false
     };
   },
   mounted() {
@@ -60,23 +66,38 @@ export default {
     },
     async fetchAndLoadProjectTracks() {
       if (!this.selectedProject) return;
+      this.isLoading = true; // Start loading
+
       try {
         const response = await this.$axios.get(
           `/api/list-project-files/${encodeURIComponent(
             this.selectedProject.name
           )}`
         );
-        response.data.forEach((file) => {
-          // Assuming file.url is directly usable or you convert it to ArrayBuffer if necessary
-          this.$store.dispatch('addTrack', {
-            name: file.name,
-            url: file.url // Adjust based on how your store expects to receive the track data
-          });
-        });
+        // Create an array of promises for each file loading action
+        const loadPromises = response.data.map(
+          file => this.loadTrack(file.name, file.url) // Assuming `loadTrack` returns a Promise
+        );
+
+        // Wait for all tracks to be loaded before hiding the loader
+        await Promise.all(loadPromises);
       } catch (error) {
         console.error('Error fetching project files:', error);
+      } finally {
+        this.isLoading = false; // End loading
       }
     },
+
+    // Example loadTrack method that returns a Promise
+    loadTrack(name, url) {
+      return new Promise((resolve, reject) => {
+        // Simulate track loading with a fetch, decode, or any async operation
+        this.$store.dispatch('addTrack', { name, url })
+          .then(resolve) // Resolve the promise when the track is loaded
+          .catch(reject); // Reject the promise on error
+      });
+    },
+
     addTracks(files) {
       if (!files.length) return;
       files.forEach((file) => {
